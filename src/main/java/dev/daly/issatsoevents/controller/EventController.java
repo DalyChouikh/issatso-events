@@ -5,6 +5,8 @@ import dev.daly.issatsoevents.entity.ImageData;
 import dev.daly.issatsoevents.service.EventService;
 import dev.daly.issatsoevents.service.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +44,46 @@ public class EventController {
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents(){
         return ResponseEntity.ok(eventService.getAllEvents());
+    }
+
+    @GetMapping("{id}/image")
+    public ResponseEntity<?> getEventImage(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.valueOf("image/png"))
+                .body(eventService.getEventImage(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteEvent(@PathVariable Long id){
+        if (eventService.getEvent(id) == null)
+            return ResponseEntity.badRequest().body("Event with id " + id + " not found");
+        eventService.deleteEvent(id);
+        return ResponseEntity.ok("Event with id " + id + " deleted successfully");
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<?> deleteAllEvent(){
+        eventService.deleteAllEvent();
+        return ResponseEntity.ok("Events deleted successfully");
+    }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Event> updateEvent(@PathVariable Long id,
+                                             @RequestParam("name") String name,
+                                             @RequestParam("description") String description,
+                                             @RequestParam("location") String location,
+                                             @RequestParam("date") LocalDate date,
+                                             @RequestParam("time") LocalTime time,
+                                             @RequestParam("organizer") String organizer,
+                                             @RequestParam("image") MultipartFile image) throws IOException {
+        Event event = eventService.getEvent(id);
+        ImageData imageData =  imageService.uploadImage(image);
+        if (event == null)
+            return ResponseEntity.badRequest().body(null);
+
+
+        return ResponseEntity.ok(eventService.updateEvent(event, name, description, location, date, time, organizer, imageData));
     }
 
 
