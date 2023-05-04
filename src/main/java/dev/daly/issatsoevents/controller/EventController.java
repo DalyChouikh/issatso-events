@@ -4,6 +4,7 @@ import dev.daly.issatsoevents.entity.Event;
 import dev.daly.issatsoevents.entity.ImageData;
 import dev.daly.issatsoevents.service.EventService;
 import dev.daly.issatsoevents.service.ImageService;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -84,6 +85,12 @@ public class EventController {
 
 
         return ResponseEntity.ok(eventService.updateEvent(event, name, description, location, date, time, organizer, imageData));
+    }
+
+    //Search events by organizer or name or location or date or time
+    @GetMapping("/search")
+    public ResponseEntity<List<Event>> searchEvents(@RequestParam String name){
+        return ResponseEntity.ok(eventService.searchEvents(name));
     }
 
 

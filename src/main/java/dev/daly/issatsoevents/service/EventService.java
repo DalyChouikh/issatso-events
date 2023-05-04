@@ -82,6 +82,26 @@ public class EventService {
         eventRepository.deleteAll();
     }
 
+    public List<Event> getEventsByOrganizer(String organizer) {
+        return eventRepository.findByOrganizer(organizer);
+    }
+
+    public List<Event> getEventsByDate(LocalDate date) {
+        return eventRepository.findByDate(date);
+    }
+
+    public List<Event> getEventsByLocation(String location) {
+        return eventRepository.findByLocation(location);
+    }
+
+    public List<Event> getEventsByTime(LocalTime time) {
+        return eventRepository.findByTime(time);
+    }
+
+public List<Event> searchEvents(String name) {
+        return eventRepository.findEventsByNameContainsIgnoreCase(name);
+    }
+
 
 
 }
