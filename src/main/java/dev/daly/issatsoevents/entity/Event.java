@@ -22,7 +22,7 @@ public class Event {
     private String description;
     private String location;
     private LocalDate date;
-    private LocalTime time;
+    private String time;
     private String organizer;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_data_id", referencedColumnName = "id")

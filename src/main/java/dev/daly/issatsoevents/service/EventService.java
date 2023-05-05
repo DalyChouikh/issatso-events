@@ -25,7 +25,7 @@ public class EventService {
                             String description,
                             String location,
                             LocalDate date,
-                            LocalTime time,
+                            String time,
                             String organizer,
                             ImageData imageData) throws IOException {
         Event event = Event.builder()
@@ -64,7 +64,7 @@ public class EventService {
                             String description,
                             String location,
                             LocalDate date,
-                            LocalTime time,
+                            String time,
                             String organizer,
                             ImageData imageData) throws IOException {
         event.setName(name);

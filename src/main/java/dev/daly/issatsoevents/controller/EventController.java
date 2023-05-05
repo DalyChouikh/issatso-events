@@ -4,6 +4,10 @@ import dev.daly.issatsoevents.entity.Event;
 import dev.daly.issatsoevents.entity.ImageData;
 import dev.daly.issatsoevents.service.EventService;
 import dev.daly.issatsoevents.service.ImageService;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,12 +29,23 @@ public class EventController {
     private final EventService eventService;
     private final ImageService imageService;
 
-    @PostMapping
+
+    @Operation(
+            tags = "Events",
+            summary = "Create a new event",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "multipart/form-data")),
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Event created successfully"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Bad request"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error")
+            }
+    )
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Event> createEvent(@RequestParam("name") String name,
                                              @RequestParam("description") String description,
                                              @RequestParam("location") String location,
                                              @RequestParam("date") LocalDate date,
-                                             @RequestParam("time") LocalTime time,
+                                             @RequestParam("time") String time,
                                              @RequestParam("organizer") String organizer,
                                              @RequestParam("image") MultipartFile image) throws IOException {
         ImageData imageData = imageService.uploadImage(image);
@@ -47,7 +62,8 @@ public class EventController {
         return ResponseEntity.ok(eventService.getAllEvents());
     }
 
-    @GetMapping("{id}/image")
+
+    @GetMapping(value = "/{id}/image", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<?> getEventImage(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf("image/png"))
@@ -75,7 +91,7 @@ public class EventController {
                                              @RequestParam("description") String description,
                                              @RequestParam("location") String location,
                                              @RequestParam("date") LocalDate date,
-                                             @RequestParam("time") LocalTime time,
+                                             @RequestParam("time") String time,
                                              @RequestParam("organizer") String organizer,
                                              @RequestParam("image") MultipartFile image) throws IOException {
         Event event = eventService.getEvent(id);
